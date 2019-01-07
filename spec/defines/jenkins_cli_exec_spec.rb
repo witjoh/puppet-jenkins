@@ -111,4 +111,31 @@ describe 'jenkins::cli::exec', type: :define do
       end
     end
   end # unless_cli_helper =>
+
+  describe 'plugin =>' do
+    let(:helper_cmd) { '/bin/cat /usr/lib/jenkins/groovy/plugins/thing/puppet_helper_thing.groovy | /usr/bin/java -jar /usr/lib/jenkins/jenkins-cli.jar -s http://127.0.0.1:8080 groovy =' }
+    context 'foo' do
+      let(:params) { { plugin: 'thing' } }
+      it do
+        is_expected.to contain_exec('foo').with(
+          command: "#{helper_cmd} foo",
+          tries: 10,
+          try_sleep: 10,
+          unless: nil,
+        )
+      end
+    end
+    context 'plugin unless' do
+      let(:params) { { plugin: 'thing', unless: 'foo' } }
+      it do
+        is_expected.to contain_exec('foo').with(
+          command: "#{helper_cmd} foo",
+          environment: ["HELPER_CMD=eval #{helper_cmd}"],
+          tries: 10,
+          try_sleep: 10,
+          unless: 'foo',
+        )
+      end
+    end
+  end
 end
