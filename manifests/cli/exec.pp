@@ -4,8 +4,9 @@
 # CLI.
 #
 define jenkins::cli::exec(
-  Optional[String] $unless        = undef,
+  Optional[String]       $unless  = undef,
   Variant[String, Array] $command = $title,
+  Optional[String]       $plugin  = undef,
 ) {
 
   include jenkins
@@ -13,22 +14,42 @@ define jenkins::cli::exec(
   include jenkins::cli::reload
 
   Class['jenkins::cli_helper']
-    -> Jenkins::Cli::Exec[$title]
-      -> Anchor['jenkins::end']
+  -> Jenkins::Cli::Exec[$title]
+  -> Anchor['jenkins::end']
+
+  if $plugin {
+    $port = jenkins_port()
+    $prefix = jenkins_prefix()
+    $_helper_cmd = join(
+      delete_undef_values([
+        '/bin/cat',
+        "${jenkins::libdir}/groovy/plugins/${plugin}/puppet_helper_${plugin}.groovy",
+        '|',
+        '/usr/bin/java',
+        "-jar ${::jenkins::cli::jar}",
+        "-s http://127.0.0.1:${port}${prefix}",
+        $::jenkins::_cli_auth_arg,
+        'groovy =',
+        ]),
+        ' '
+    )
+  } else {
+    $_helper_cmd = $::jenkins::cli_helper::helper_cmd
+  }
 
   # $command may be either a string or an array due to the use of flatten()
   $run = join(
     delete_undef_values(
       flatten([
-        $jenkins::cli_helper::helper_cmd,
+        $_helper_cmd,
         $command,
-      ])
+        ])
     ),
     ' '
   )
 
   if $unless {
-    $environment_run = [ "HELPER_CMD=eval ${jenkins::cli_helper::helper_cmd}" ]
+    $environment_run = [ "HELPER_CMD=eval ${_helper_cmd}" ]
   } else {
     $environment_run = undef
   }
