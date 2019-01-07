@@ -14,10 +14,10 @@ class jenkins::cli_helper {
   $cli_jar = $jenkins::cli::jar
   $port = jenkins_port()
   $prefix = jenkins_prefix()
-  $helper_groovy = pick($facts['jenkins_puppet_helper'], "${libdir}/puppet_helper.groovy")
+  $helper_groovy = "${libdir}/puppet_helper.groovy"
 
   file { $helper_groovy:
-    source  => 'puppet:///modules/vdab_jenkins/vdab_puppet_helper.groovy',
+    source  => 'puppet:///modules/jenkins/puppet_helper.groovy',
     owner   => $jenkins::user,
     group   => $jenkins::group,
     mode    => '0444',
