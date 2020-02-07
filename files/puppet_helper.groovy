@@ -784,6 +784,18 @@ class Actions {
         strategy = new hudson.security.AuthorizationStrategy.Unsecured()
         realm = new hudson.security.HudsonPrivateSecurityRealm(false, false, null)
         break
+      case 'global_matrix':
+        strategy = new hudson.security.GlobalMatrixAuthorizationStrategy()
+        realm = new hudson.security.HudsonPrivateSecurityRealm(false, false, null)
+        break
+      case 'project_matrix':
+        strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
+        realm = new hudson.security.HudsonPrivateSecurityRealm(false, false, null)
+        break
+      case 'role_matrix':
+        strategy = new hudson.security.RoleBasedAuthorizationStrategy()
+        realm = new hudson.security.HudsonPrivateSecurityRealm(false, false, null)
+        break
       default:
         throw new InvalidAuthenticationStrategy()
     }
@@ -933,6 +945,8 @@ class Actions {
         // the matrix which are not presently supported
       // "Project-based Matrix Authorization Strategy"
       case 'hudson.security.ProjectMatrixAuthorizationStrategy':
+        // same issue as hudson.security.GlobalMatrixAuthorizationStrategy
+      case 'hudson.security.RoleBasedAuthorizationStrategy':
         // same issue as hudson.security.GlobalMatrixAuthorizationStrategy
       default:
         config = [
