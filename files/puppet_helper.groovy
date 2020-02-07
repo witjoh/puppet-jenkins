@@ -793,7 +793,7 @@ class Actions {
         realm = new hudson.security.HudsonPrivateSecurityRealm(false, false, null)
         break
       case 'role_matrix':
-        strategy = new hudson.security.RoleBasedAuthorizationStrategy()
+        strategy = new com.michelin.cio.hudson.plugins.rolestrategy.RoleBasedAuthorizationStrategy()
         realm = new hudson.security.HudsonPrivateSecurityRealm(false, false, null)
         break
       default:
@@ -905,7 +905,7 @@ class Actions {
       case 'hudson.security.ProjectMatrixAuthorizationStrategy':
         authorizationStrategyName = 'project_matrix'
         break
-      case 'hudson.security.RoleBasedAuthorizationStrategy':
+      case 'com.michelin.cio.hudson.plugins.rolestrategy.RoleBasedAuthorizationStrategy':
         authorizationStrategyName = 'role_matrix'
         break
       default:
@@ -958,7 +958,7 @@ class Actions {
       // "Project-based Matrix Authorization Strategy"
       case 'hudson.security.ProjectMatrixAuthorizationStrategy':
         // same issue as hudson.security.GlobalMatrixAuthorizationStrategy
-      case 'hudson.security.RoleBasedAuthorizationStrategy':
+      case 'com.michelin.cio.hudson.plugins.rolestrategy.RoleBasedAuthorizationStrategy':
         // same issue as hudson.security.GlobalMatrixAuthorizationStrategy
       default:
         config = [
